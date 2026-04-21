@@ -1,0 +1,6 @@
+#THIS FILES ARE NOT INCLUDED
+
+.venv
+.env
+.idea
+querry.py
