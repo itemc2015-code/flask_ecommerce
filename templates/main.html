@@ -1,0 +1,16 @@
+{%extends "base.html"%}
+{%block head%}{%endblock%}
+{%block body%}
+<center>
+    <h2>E-COMMERCE SHOPPING</h2>
+<table style="background-color:skyblue" width="500">
+    <tr><th>No.</th><th>ITEMS</th><th>PRICE</th></tr>
+    {% for v in view_lists %}
+    <tr><td align="center">{{v['product_id']}}</td>
+        <td>{{v['item_name']}}</td>
+        <td align="center">{{v['price']}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</center>
+{%endblock%}
