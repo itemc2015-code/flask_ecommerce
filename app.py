@@ -1,22 +1,29 @@
 from flask import Flask,jsonify
 from product import product_blueprint
+from user import user_blueprint
 from ecommercedb import Products,Users
 from passlib.context import CryptContext
+from passlib.hash import sha256_crypt
+from flasgger import Swagger
 
 app = Flask(__name__)
+Swagger(app)
 app.register_blueprint(product_blueprint,url_prefix='/product')
+app.register_blueprint(user_blueprint,url_prefix='/user')
 app.config['list_of_product'] = Products()
 app.config['list_of_users'] = Users()
 pwd_context = CryptContext(schemes=['bcrypt'],deprecated='auto')
 
-def create_admin():
+def create_admin(role='user'):
     add_admin = app.config['list_of_users']
-    if not add_admin:
+    get_user = add_admin.user_querry()
+    if not get_user:
         username = 'admin'
-        pwd = 1234
-        hash_pwd = pwd_context.hash(pwd)
-        add_admin.add_user(username,hash_pwd)
-        print(hash_pwd)
+        pwd = '1234'
+        hash_pwd = sha256_crypt.hash(pwd)
+        role = 'admin'
+        add_admin.add_user(username,hash_pwd,role)
+
 @app.before_first_request
 def startup_event():
     create_admin()
@@ -26,7 +33,8 @@ if __name__ == '__main__':
 
 """
 USERS/ADMIN
-create default admin on start
+#create default admin on start
+/sign_up,/login
 normal - view products,add to cart,update order,delete order,checkout
 	 register,login,change password
 admin - view products,update product list,delete product

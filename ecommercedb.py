@@ -31,10 +31,23 @@ class Users(Dbconnect):
         result = dbcursor.fetchall()
         return result
 
-    def add_user(self,username,pwd):
+    def create_admin(self):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True,buffered=True)
-        query = 'insert into users(username,pwd) values(%s,%s)'
-        dbcursor.execute(query,(username,pwd,))
+        query = 'insert into users(username,pwd)'
+
+    def add_user(self,username,pwd,role):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'insert into users(username,pwd,role) values(%s,%s,%s)'
+        dbcursor.execute(query,(username,pwd,role,))
         dbcursor.close()
         self.db.commit()
+
+    def get_username(self,username):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor()
+        query = 'select * from users where username = %s'
+        dbcursor.execute(query,(username,))
+        result = dbcursor.fetchall()
+        return result
