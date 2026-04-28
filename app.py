@@ -34,7 +34,7 @@ if __name__ == '__main__':
 """
 USERS/ADMIN
 #create default admin on start
-/sign_up,/login
+#/sign_up for normal user,/login
 normal - view products,add to cart,update order,delete order,checkout
 	 register,login,change password
 admin - view products,update product list,delete product

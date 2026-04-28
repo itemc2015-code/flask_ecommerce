@@ -22,5 +22,23 @@ def user_signup():
     user_request.add_user(username,hash_pwd,role='user')
     return jsonify({'message':'successfully added'}),200
 
-#TO BE CONTINUE: USER SIGNUP AND PUSH TO GIT (ADD SWAGGER)
-#HAS ERROR
+@user_blueprint.route('/login',methods=['POST'])
+@swag_from('docs/auth.yml')
+def user_login():
+    user_request = current_app.config['list_of_users']
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    get_user = user_request.get_username(username)
+
+    if not username or not str(username).strip() or not password or not str(password).strip():
+        return jsonify({'message':'username and password cannot be blank'}),400
+    if not get_user:
+        return jsonify({'message':'username not found'}),400
+    verify_pwd = sha256_crypt.verify(password,get_user['pwd'])
+    if not verify_pwd:
+        return jsonify({'message':'wrong password'}),400
+    return jsonify({'message':'successfully login'})
+
+#USER LOGIN AND PUSH TO GIT - HAS ERROR WHEN USERNAME NOT FOUND
+

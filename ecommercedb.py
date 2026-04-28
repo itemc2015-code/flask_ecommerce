@@ -46,8 +46,8 @@ class Users(Dbconnect):
 
     def get_username(self,username):
         self.db.ping(reconnect=True)
-        dbcursor = self.db.cursor()
+        dbcursor = self.db.cursor(dictionary=True)
         query = 'select * from users where username = %s'
         dbcursor.execute(query,(username,))
-        result = dbcursor.fetchall()
+        result = dbcursor.fetchone()
         return result
