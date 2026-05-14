@@ -1,0 +1,19 @@
+tags:
+  - Order
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        prod_id:
+          type: integer
+          example: 1
+        quantity:
+          type: integer
+responses:
+  200:
+    description: Success
+  400:
+    description: Error

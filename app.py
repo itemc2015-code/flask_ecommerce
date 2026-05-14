@@ -1,7 +1,9 @@
 from flask import Flask,jsonify
 from product import product_blueprint
 from user import user_blueprint
-from ecommercedb import Products,Users
+from order import order_blueprint
+from admin import admin_blueprint
+from ecommercedb import Products,Users,Orders
 from passlib.context import CryptContext
 from passlib.hash import sha256_crypt
 from flasgger import Swagger
@@ -10,8 +12,11 @@ app = Flask(__name__)
 Swagger(app)
 app.register_blueprint(product_blueprint,url_prefix='/product')
 app.register_blueprint(user_blueprint,url_prefix='/user')
+app.register_blueprint(order_blueprint,url_prefix='/order')
+app.register_blueprint(admin_blueprint,url_prefix='/admin')
 app.config['list_of_product'] = Products()
 app.config['list_of_users'] = Users()
+app.config['list_of_order'] = Orders()
 pwd_context = CryptContext(schemes=['bcrypt'],deprecated='auto')
 
 def create_admin(role='user'):
@@ -35,10 +40,19 @@ if __name__ == '__main__':
 USERS/ADMIN
 #create default admin on start
 #/sign_up for normal user,#/login
-normal - view products,add to cart,update order,delete order,checkout
-	 register,login,change password
-admin - view products,update product list,delete product
-	delete user,update password of user 
+normal - #view products
+         add to cart
+         update order
+         delete order
+         checkout
+	     register
+	     login
+	     change password
+admin - view products
+        update product list
+        delete product
+	    delete user
+	    update password of user 
 
 DATABASE
 users > orders > order_items

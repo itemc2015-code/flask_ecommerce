@@ -21,6 +21,14 @@ class Products(Dbconnect):
         result = dbcursor.fetchall()
         dbcursor.close()
         return result
+    def get_product(self,product_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True)
+        query = 'select * from product where product_id = %s'
+        dbcursor.execute(query,(product_id,))
+        result = dbcursor.fetchone()
+        dbcursor.close()
+        return result
 
 class Users(Dbconnect):
     def user_querry(self):
@@ -29,6 +37,7 @@ class Users(Dbconnect):
         query = 'select * from users'
         dbcursor.execute(query)
         result = dbcursor.fetchall()
+        dbcursor.close()
         return result
 
     def create_admin(self):
@@ -51,3 +60,47 @@ class Users(Dbconnect):
         dbcursor.execute(query,(username,))
         result = dbcursor.fetchone()
         return result
+
+class Orders(Dbconnect):
+    def view_orders(self):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select * from orders'
+        dbcursor.execute(query)
+        result = dbcursor.fetchall()
+        dbcursor.close()
+        return result
+
+    def add_to_order_item(self,order_id,product_id,quantity,total,price):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True)
+        query = """insert into order_items(order_id,product_id,quantity,total,price)
+                    values(%s,%s,%s,%s,%s)"""
+        dbcursor.execute(query,(order_id,product_id,quantity,total,price,))
+        self.db.commit()
+        dbcursor.close()
+
+    def add_to_order(self,user_id,grand_total):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True)
+        query = """insert into orders(user_id,grand_total)
+                values(%s,%s,%s)"""
+        dbcursor.execute(query,(user_id,grand_total,))
+        self.db.commit()
+        dbcursor.close()
+
+"""
+[{'Tables_in_flask_ecommerce': 'order_items'},
+[{'Field': 'id', 'Type': 'int(11)', 'Null': 'NO', 'Key': 'PRI', 'Default': None, 'Extra': 'auto_increment'},
+{'Field': 'order_id', 'Type': 'int(11)', 'Null': 'YES', 'Key': 'MUL', 'Default': None, 'Extra': ''}, 
+{'Field': 'product_id', 'Type':'int(11)', 'Null': 'YES', 'Key': 'MUL', 'Default': None, 'Extra': ''}, 
+{'Field': 'quantity', 'Type': 'int(11)', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}, 
+{'Field': 'total', 'Type': 'float', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}, 
+{'Field': 'price', 'Type': 'float', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}]
+
+{'Tables_in_flask_ecommerce': 'orders'}, 
+[{'Field': 'order_id', 'Type': 'int(11)', 'Null': 'NO', 'Key': 'PRI', 'Default': None, 'Extra': 'auto_increment'}, 
+{'Field': 'user_id', 'Type': 'int(11)', 'Null': 'YES', 'Key': 'MUL', 'Default': None, 'Extra': ''}, 
+{'Field': 'grand_total','Type': 'float', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}, 
+{'Field': 'price', 'Type': 'float', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}]
+"""

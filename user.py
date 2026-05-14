@@ -1,8 +1,16 @@
 from flask import Blueprint,current_app,request,jsonify
 from passlib.hash import sha256_crypt
 from flasgger import swag_from
+from jose import jwt
+import os
+from dotenv import load_dotenv
+from datetime import datetime,timedelta
 
 user_blueprint = Blueprint('user',__name__)
+load_dotenv()
+ALGORITHM = 'HS256'
+SECRET_KEY = os.getenv('secrets')
+exp_time = 20
 
 @user_blueprint.route('/signup',methods=['POST'])
 @swag_from('docs/auth.yml')
@@ -26,7 +34,7 @@ def user_signup():
 @swag_from('docs/auth.yml')
 def user_login():
     user_request = current_app.config['list_of_users']
-    data = request.get_json()
+    data = request.get_json() or {}
     username = data.get('username')
     password = data.get('password')
     get_user = user_request.get_username(username)
@@ -38,7 +46,9 @@ def user_login():
     verify_pwd = sha256_crypt.verify(password,get_user['pwd'])
     if not verify_pwd:
         return jsonify({'message':'wrong password'}),400
-    return jsonify({'message':'successfully login'})
+    expire_time = datetime.utcnow() + timedelta(minutes=exp_time)
+    for_payload = {"id":get_user.get('user_id'),"username":get_user.get('username'),"role":get_user.get('role'),"exp":expire_time}
+    token = jwt.encode(for_payload,SECRET_KEY,algorithm=ALGORITHM)
+    return jsonify({'access_token':token,'token_type':'bearer'})
 
-#USER LOGIN AND PUSH TO GIT - HAS ERROR WHEN USERNAME NOT FOUND
 
