@@ -1,5 +1,5 @@
 tags:
-  - Users
+  - Admin
 responses:
   200:
-    description: Users
+    description: Admin

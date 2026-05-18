@@ -61,6 +61,14 @@ class Users(Dbconnect):
         result = dbcursor.fetchone()
         return result
 
+    def delete_user(self,id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'delete from users where user_id = %s'
+        dbcursor.execute(query,(id,))
+        dbcursor.close()
+        self.db.commit()
+
 class Orders(Dbconnect):
     def view_orders(self):
         self.db.ping(reconnect=True)

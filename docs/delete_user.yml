@@ -1,0 +1,17 @@
+tags:
+  - Admin
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        id:
+          type: integer
+responses:
+  200:
+    description: Admin

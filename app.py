@@ -51,7 +51,7 @@ normal - #view products
 admin - view products
         update product list
         delete product
-	    delete user
+	    #delete user
 	    update password of user 
 
 DATABASE
