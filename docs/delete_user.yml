@@ -12,6 +12,8 @@ parameters:
           example: 1
         id:
           type: integer
+security:
+  - Bearer: []
 responses:
   200:
     description: Admin

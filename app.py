@@ -9,7 +9,17 @@ from passlib.hash import sha256_crypt
 from flasgger import Swagger
 
 app = Flask(__name__)
-Swagger(app)
+Swagger(app, template={
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer <JWT token>"
+        }
+    }
+})
+
 app.register_blueprint(product_blueprint,url_prefix='/product')
 app.register_blueprint(user_blueprint,url_prefix='/user')
 app.register_blueprint(order_blueprint,url_prefix='/order')
