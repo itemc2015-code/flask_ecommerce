@@ -69,6 +69,14 @@ class Users(Dbconnect):
         dbcursor.close()
         self.db.commit()
 
+    def update_password(self,username,password):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'update users set pwd = %s where username = %s'
+        dbcursor.execute(query,(password,username))
+        dbcursor.close()
+        self.db.commit()
+
 class Orders(Dbconnect):
     def view_orders(self):
         self.db.ping(reconnect=True)

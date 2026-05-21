@@ -1,5 +1,7 @@
 tags:
   - Admin
+security:
+  - Bearer: []
 parameters:
   - in: body
     name: body

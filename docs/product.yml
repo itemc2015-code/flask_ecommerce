@@ -1,5 +1,7 @@
 tags:
   - Products
+security:
+  - Bearer: []
 responses:
   200:
     description: List of products

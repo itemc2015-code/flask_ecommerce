@@ -9,10 +9,10 @@ parameters:
       properties:
         username:
           type: string
-          example:
+          example: "name"
         password:
           type: string
-          example:
+          example: "password"
 responses:
   200:
     description: Success

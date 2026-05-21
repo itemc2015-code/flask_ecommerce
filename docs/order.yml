@@ -1,5 +1,7 @@
 tags:
   - Order
+security:
+  - Bearer: []
 parameters:
   - in: body
     name: body

@@ -31,8 +31,9 @@ pwd_context = CryptContext(schemes=['bcrypt'],deprecated='auto')
 
 def create_admin(role='user'):
     add_admin = app.config['list_of_users']
-    get_user = add_admin.user_querry()
-    if not get_user:
+    data = add_admin.user_querry()
+    get_user = [d['username'] for d in data]
+    if 'admin' not in get_user:
         username = 'admin'
         pwd = '1234'
         hash_pwd = sha256_crypt.hash(pwd)
