@@ -47,15 +47,32 @@ def user_password(current_user):
     get_user.update_password(username,hash_pwd)
     return jsonify({'message':'password successfully updated'})
 
+@admin_blueprint.route('/create_admin_user',methods=['POST'])
+@token_required
+@admin_required
+@swag_from('docs/create_admin.yml')
+def admin_user(current_user):
+    data = current_app.config['list_of_users']
+    get_data = request.get_json() or {}
+    username = get_data.get('username')
+    password = get_data.get('password')
+    if_match_username = data.get_username(username)
+    if if_match_username:
+        return jsonify({'message':'username already exist'})
+    hash_pwd = sha256_crypt.hash(password)
+    role = 'admin'
+    data.add_user(username,hash_pwd,role)
+    return jsonify({'message':'new admin role successfully added'})
 
-#TO BE CONTINUE: update user pwd, admin only, update repo
+
+#TO BE CONTINUE: always update repo
                 #put authentication first on all route
                 #test all route
-                #create user, role is admin
 
 '''admin - #view products
+        #create user, role is admin
         update product list
         delete product
 	    #delete user
-	    update password of user '''
+	    #update password of user '''
 

@@ -63,7 +63,8 @@ admin - view products
         update product list
         delete product
 	    #delete user
-	    update password of user 
+	    #update password of user 
+	    #create user, role is admin
 
 DATABASE
 users > orders > order_items
