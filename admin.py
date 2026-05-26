@@ -90,7 +90,19 @@ def update_product(current_user):
     data.update_product(product_id,item_name,stock_quantity,price)
     return jsonify({'message':'successfully updated'})
 
-
+@admin_blueprint.route('delete_product',methods=['DELETE'])
+@token_required
+@admin_required
+@swag_from('docs/delete_product.yml')
+def product_delete(current_user):
+    data = current_app.config['list_of_product']
+    get_input = request.get_json() or {}
+    product_id = get_input.get('product_id')
+    get_product_id = data.get_product(product_id)
+    if not get_product_id:
+        return jsonify({'message':'product id not found'}),404
+    data.delete_product(product_id)
+    return jsonify({'message':'successfully deleted'})
 
 '''
 #TO BE CONTINUE: always update repo
@@ -100,8 +112,8 @@ admin - #view products
         #create user, role is admin
         #delete user
 	    #update password of user
-        update product list
-        delete product
+        #update product list
+        #delete product
 
 '''
 

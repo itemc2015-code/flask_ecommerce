@@ -60,7 +60,7 @@ normal - #view products
 	     login
 	     change password
 admin - #view products
-        update product list
+        #update product list
         delete product
 	    #delete user
 	    #update password of user 

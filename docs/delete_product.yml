@@ -1,0 +1,27 @@
+tags:
+  - Admin
+security:
+  - Bearer: []
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - product_id
+      properties:
+        product_id:
+          type: integer
+          example:
+responses:
+  200:
+    description: Password updated successfully
+  400:
+    description: Invalid input
+  401:
+    description: Token missing or invalid
+  403:
+    description: No permission
+  404:
+    description: Username not found

@@ -36,6 +36,13 @@ class Products(Dbconnect):
         dbcursor.execute(query,(item_name,stock_quantity,price,product_id))
         dbcursor.close()
         self.db.commit()
+    def delete_product(self,product_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'delete from product where product_id = %s'
+        dbcursor.execute(query,(product_id,))
+        dbcursor.close()
+        self.db.commit()
 
 class Users(Dbconnect):
     def user_querry(self):
