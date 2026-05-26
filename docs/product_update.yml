@@ -9,15 +9,20 @@ parameters:
     schema:
       type: object
       required:
-        - username
-        - password
+        - product_id
       properties:
-        username:
+        product_id:
+          type: int
+          example:
+        item_name:
           type: string
-          example: ""
-        password:
-          type: string
-          example: ""
+          example:
+        stock_quantity:
+          type: int
+          example:
+        price:
+          type: int
+          example:
 responses:
   200:
     description: Password updated successfully

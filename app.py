@@ -59,7 +59,7 @@ normal - #view products
 	     register
 	     login
 	     change password
-admin - view products
+admin - #view products
         update product list
         delete product
 	    #delete user

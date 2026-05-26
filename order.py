@@ -1,11 +1,13 @@
 from flask import Blueprint,current_app,request,jsonify
 from flasgger import swag_from
+from verify import token_required
 
 order_blueprint = Blueprint("order",__name__)
 
 @order_blueprint.route('/order',methods=['POST'])
+@token_required
 @swag_from('docs/order.yml')
-def add_to_cart():
+def add_to_cart(current_user):
     order_lists = current_app.config['list_of_order']
     get_products = current_app.config['list_of_product']
     get_user = current_app.config['list_of_users']

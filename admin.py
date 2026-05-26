@@ -19,8 +19,10 @@ def users_view(current_user):
         return jsonify({'message':'empty'})
 
 @admin_blueprint.route('/delete_user',methods=['POST'])
+@token_required
+@admin_required
 @swag_from('docs/delete_user.yml')
-def user_delete():
+def user_delete(current_user):
     get_user = current_app.config['list_of_users']
     get_users = get_user.user_querry()
     get_id = [g['user_id'] for g in get_users]
@@ -57,22 +59,49 @@ def admin_user(current_user):
     username = get_data.get('username')
     password = get_data.get('password')
     if_match_username = data.get_username(username)
+    if not username or not str(username).strip():
+        return jsonify({'message':'username cannot be blank'}),400
+    if not password or not str(password).strip():
+        return jsonify({'message': 'password cannot be blank'}), 400
     if if_match_username:
-        return jsonify({'message':'username already exist'})
+        return jsonify({'message':'username already exist'}),400
     hash_pwd = sha256_crypt.hash(password)
     role = 'admin'
     data.add_user(username,hash_pwd,role)
     return jsonify({'message':'new admin role successfully added'})
 
+@admin_blueprint.route('/update_product',methods=['PUT'])
+@token_required
+@admin_required
+@swag_from('docs/product_update.yml')
+def update_product(current_user):
+    data = current_app.config['list_of_product']
+    get_input = request.get_json() or {}
+    product_id = get_input.get('product_id')
+    item_name = get_input.get('item_name')
+    stock_quantity = get_input.get('stock_quantity')
+    price = get_input.get('price')
+    get_prod_id = data.get_product(product_id)
+    if not get_prod_id:
+        return jsonify({'message':'product id not found'}),404
+    item_name = get_prod_id['item_name'] if not item_name else item_name
+    stock_quantity = get_prod_id['stock_quantity'] if not stock_quantity else stock_quantity
+    price = get_prod_id['price'] if not price else price
+    data.update_product(product_id,item_name,stock_quantity,price)
+    return jsonify({'message':'successfully updated'})
 
+
+
+'''
 #TO BE CONTINUE: always update repo
-                #put authentication first on all route
-                #test all route
 
-'''admin - #view products
+
+admin - #view products
         #create user, role is admin
+        #delete user
+	    #update password of user
         update product list
         delete product
-	    #delete user
-	    #update password of user '''
+
+'''
 

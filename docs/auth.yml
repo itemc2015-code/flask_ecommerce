@@ -6,13 +6,16 @@ parameters:
     required: true
     schema:
       type: object
+      required:
+        - username
+        - password
       properties:
         username:
           type: string
-          example: "name"
+          example: ""
         password:
           type: string
-          example: "password"
+          example: ""
 responses:
   200:
     description: Success

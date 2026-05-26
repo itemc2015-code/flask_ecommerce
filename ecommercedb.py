@@ -29,6 +29,13 @@ class Products(Dbconnect):
         result = dbcursor.fetchone()
         dbcursor.close()
         return result
+    def update_product(self,product_id,item_name,stock_quantity,price):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'update product set item_name=%s,stock_quantity=%s,price=%s where product_id=%s'
+        dbcursor.execute(query,(item_name,stock_quantity,price,product_id))
+        dbcursor.close()
+        self.db.commit()
 
 class Users(Dbconnect):
     def user_querry(self):
