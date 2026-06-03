@@ -104,16 +104,5 @@ def product_delete(current_user):
     data.delete_product(product_id)
     return jsonify({'message':'successfully deleted'})
 
-'''
-#TO BE CONTINUE: always update repo
 
-
-admin - #view products
-        #create user, role is admin
-        #delete user
-	    #update password of user
-        #update product list
-        #delete product
-
-'''
 

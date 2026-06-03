@@ -20,7 +20,7 @@ def token_required(f):
         except ExpiredSignatureError:
             return jsonify({'message':'token expired'}),401
         except JWTError:
-            return jsonify({'message':'invalid token'})
+            return jsonify({'message':'invalid token'}),401
         return f(data,*args,**kwargs)
     return decorated
 

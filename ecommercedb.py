@@ -101,23 +101,70 @@ class Orders(Dbconnect):
         dbcursor.close()
         return result
 
-    def add_to_order_item(self,order_id,product_id,quantity,total,price):
+    def get_order(self,order_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select * from orders where order_id = %s'
+        dbcursor.execute(query,(order_id,))
+        result = dbcursor.fetchone()
+        dbcursor.close()
+        return result['grand_total']
+
+    def add_to_order_item(self,order_id,product_id,quantity,total,price,item_name):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True)
-        query = """insert into order_items(order_id,product_id,quantity,total,price)
-                    values(%s,%s,%s,%s,%s)"""
-        dbcursor.execute(query,(order_id,product_id,quantity,total,price,))
+        query = """insert into order_items(order_id,product_id,quantity,total,price,item_name)
+                    values(%s,%s,%s,%s,%s,%s)"""
+        dbcursor.execute(query,(order_id,product_id,quantity,total,price,item_name))
         self.db.commit()
         dbcursor.close()
 
-    def add_to_order(self,user_id,grand_total):
+    def add_to_order(self,user_id):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True)
-        query = """insert into orders(user_id,grand_total)
-                values(%s,%s,%s)"""
-        dbcursor.execute(query,(user_id,grand_total,))
+        query = """insert into orders(user_id)
+                values(%s)"""
+        dbcursor.execute(query,(user_id,))
         self.db.commit()
+        order_id = dbcursor.lastrowid
         dbcursor.close()
+        return order_id
+
+    def has_pending_order(self,user_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select * from orders where user_id = %s and status = "pending"'
+        dbcursor.execute(query,(user_id,))
+        result = dbcursor.fetchone()
+        dbcursor.close()
+        return result
+
+    def get_order_items(self,order_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True)
+        query = 'select * from order_items where order_id = %s'
+        dbcursor.execute(query,(order_id,))
+        result = dbcursor.fetchall()
+        dbcursor.close()
+        return result
+
+    def get_grand_total(self,order_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select sum(total) as grand_total from order_items where order_id = %s'
+        dbcursor.execute(query,(order_id,))
+        result = dbcursor.fetchone()
+        dbcursor.close()
+        return result['grand_total']
+
+    def grand_total(self,order_id,grandtotal):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'update orders set grand_total = %s where order_id = %s'
+        dbcursor.execute(query,(grandtotal,order_id))
+        dbcursor.close()
+        self.db.commit()
+
 
 """
 [{'Tables_in_flask_ecommerce': 'order_items'},

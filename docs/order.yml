@@ -8,14 +8,24 @@ parameters:
     required: true
     schema:
       type: object
+      required:
+        - product_id
+        - quantity
       properties:
-        prod_id:
+        product_id:
           type: integer
-          example: 1
+          example:
         quantity:
           type: integer
+          example:
 responses:
   200:
-    description: Success
+    description: Password updated successfully
   400:
-    description: Error
+    description: Invalid input
+  401:
+    description: Token missing or invalid
+  403:
+    description: No permission
+  404:
+    description: Username not found

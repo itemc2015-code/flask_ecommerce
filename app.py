@@ -61,7 +61,7 @@ normal - #view products
 	     change password
 admin - #view products
         #update product list
-        delete product
+        #delete product
 	    #delete user
 	    #update password of user 
 	    #create user, role is admin
@@ -92,8 +92,8 @@ user
 /update_password_of_any_user - admin
 
 AUTHENTICATION
-generate token
-protect routes
+#generate token
+#protect routes
 
 HTML (BASIC DISPLAY) 
 """
