@@ -183,6 +183,31 @@ class Orders(Dbconnect):
         dbcursor.close()
         self.db.commit()
 
+    def total_order_count(self,order_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select count(total) as total_count from order_items where order_id = %s'
+        dbcursor.execute(query,(order_id,))
+        result = dbcursor.fetchone()
+        dbcursor.close()
+        return result['total_count']
+
+    def update_order_count(self,order_id,order_count):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'update orders set order_count = %s where order_id = %s'
+        dbcursor.execute(query,(order_count,order_id))
+        dbcursor.close()
+        self.db.commit()
+
+    def get_order_count(self,order_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select * from orders where order_id = %s'
+        dbcursor.execute(query,(order_id,))
+        result = dbcursor.fetchone()
+        dbcursor.close()
+        return result['order_count']
 
 """
 [{'Tables_in_flask_ecommerce': 'order_items'},

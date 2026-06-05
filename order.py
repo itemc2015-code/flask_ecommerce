@@ -39,6 +39,10 @@ def add_to_cart(current_user):
         order_grand_total = order_lists.get_order(order_id)
         grand_total = order_lists.get_grand_total(order_id)
         order_grand_total = grand_total
+        total_order_count = order_lists.total_order_count(order_id)
+        current_order_count = order_lists.get_order_count(order_id)
+        current_order_count = total_order_count
+        order_lists.update_order_count(order_id,current_order_count)
         order_lists.grand_total(order_id,order_grand_total)
         return jsonify({'message': 'cart updated succefully'})
     order_id = order_lists.add_to_order(user_id)
