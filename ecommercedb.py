@@ -92,10 +92,28 @@ class Users(Dbconnect):
         self.db.commit()
 
 class Orders(Dbconnect):
-    def view_orders(self):
+    def view_orders(self,user_id,order_id):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True,buffered=True)
-        query = 'select * from orders'
+        query = 'select * from orders where user_id = %s and order_id = %s'
+        dbcursor.execute(query,(user_id,order_id))
+        result = dbcursor.fetchall()
+        dbcursor.close()
+        return result
+
+    def view_user_orders(self,order_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select * from order_items where order_id = %s'
+        dbcursor.execute(query,(order_id,))
+        result = dbcursor.fetchall()
+        dbcursor.close()
+        return result
+
+    def all_order_items(self):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select * from order_items'
         dbcursor.execute(query)
         result = dbcursor.fetchall()
         dbcursor.close()

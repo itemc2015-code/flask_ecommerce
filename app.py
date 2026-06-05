@@ -52,7 +52,7 @@ USERS/ADMIN
 #create default admin on start
 #/sign_up for normal user,#/login
 normal - #view products
-         add to cart
+         #add to cart
          update order
          delete order
          checkout

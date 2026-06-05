@@ -47,17 +47,60 @@ def add_to_cart(current_user):
     order_lists.add_to_order_item(order_id,product_id,quantity,total,price,item_name)
     return jsonify({'message':'item added to cart'})
 
+@order_blueprint.route('/view_orders',methods=['GET'])
+@token_required
+@swag_from('docs/view_order.yml')
+def view_order(current_user):
+    user_id = current_user.get('user_id')
+    order_service = current_app.config['list_of_order']
+    order_items = order_service.all_order_items()
+    order_service.view_orders(user_id,)
+    order_id = [o['order_id'] for o in order_items]
+    get_order_id = order_service.has_pending_order(user_id)
 
-#ALWAYS UPDATE GIT, add order to cart
+    if not order_items:
+        return jsonify({'message':'cart is empty'})
+    print(order_id)
+    return order_items
 
+
+#ALWAYS UPDATE GIT, add no. of items, view orders
 
 '''
 normal - #view products
-         add to cart
+         #add to cart
          update order
          delete order
          checkout
 	     register
 	     login
 	     change password
+	     
+[
+  {
+    "id": 7,
+    "role": "user",
+    "username": "luffy"
+  },
+  {
+    "id": 9,
+    "role": "user",
+    "username": "usoff"
+  },
+  {
+    "id": 12,
+    "role": "admin",
+    "username": "brook"
+  },
+  {
+    "id": 13,
+    "role": "admin",
+    "username": "admin"
+  },
+  {
+    "id": 14,
+    "role": "user",
+    "username": "chopper"
+  }
+]
 '''

@@ -1,0 +1,7 @@
+tags:
+  - Order
+security:
+  - Bearer: []
+responses:
+  200:
+    description: List of orders
