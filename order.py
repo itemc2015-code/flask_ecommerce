@@ -55,20 +55,14 @@ def add_to_cart(current_user):
 @token_required
 @swag_from('docs/view_order.yml')
 def view_order(current_user):
-    user_id = current_user.get('user_id')
-    order_service = current_app.config['list_of_order']
-    order_items = order_service.all_order_items()
-    order_service.view_orders(user_id,)
-    order_id = [o['order_id'] for o in order_items]
-    get_order_id = order_service.has_pending_order(user_id)
+    user_id = current_user.get('id')
+    order_services = current_app.config['list_of_order']
+    get_order_id = order_services.pending_order(user_id)
+    order_id = get_order_id['order_id']
+    orders = order_services.user_order(order_id)
+    return orders
 
-    if not order_items:
-        return jsonify({'message':'cart is empty'})
-    print(order_id)
-    return order_items
-
-
-#ALWAYS UPDATE GIT, add no. of items, view orders
+#ALWAYS UPDATE GIT, view orders, issue: cant view order for specific user
 
 '''
 normal - #view products

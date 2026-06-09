@@ -110,6 +110,17 @@ class Orders(Dbconnect):
         dbcursor.close()
         return result
 
+    def user_order(self,order_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = '''select oi.order_id,oi.item_name as item,oi.price,oi.quantity,oi.total from orders as o
+                join order_items oi on o.order_id = oi.order_id
+                where o.order_id = %s'''
+        dbcursor.execute(query,(order_id,))
+        result = dbcursor.fetchall()
+        dbcursor.close()
+        return result
+
     def all_order_items(self):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True,buffered=True)
@@ -152,6 +163,15 @@ class Orders(Dbconnect):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True,buffered=True)
         query = 'select * from orders where user_id = %s and status = "pending"'
+        dbcursor.execute(query,(user_id,))
+        result = dbcursor.fetchone()
+        dbcursor.close()
+        return result
+
+    def pending_order(self,user_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select * from orders where user_id = %s'
         dbcursor.execute(query,(user_id,))
         result = dbcursor.fetchone()
         dbcursor.close()
