@@ -53,12 +53,13 @@ USERS/ADMIN
 #/sign_up for normal user,#/login
 normal - #view products
          #add to cart
+         #view order
          update order
          delete order
          checkout
-	     register
-	     login
-	     change password
+	     #register
+	     #login
+	     #change password
 admin - #view products
         #update product list
         #delete product

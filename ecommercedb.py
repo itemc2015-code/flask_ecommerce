@@ -113,7 +113,7 @@ class Orders(Dbconnect):
     def user_order(self,order_id):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True,buffered=True)
-        query = '''select oi.order_id,oi.item_name as item,oi.price,oi.quantity,oi.total from orders as o
+        query = '''select oi.product_id,oi.item_name as item,oi.price,oi.quantity,oi.total from orders as o
                 join order_items oi on o.order_id = oi.order_id
                 where o.order_id = %s'''
         dbcursor.execute(query,(order_id,))
@@ -228,6 +228,14 @@ class Orders(Dbconnect):
         result = dbcursor.fetchone()
         dbcursor.close()
         return result['order_count']
+
+    def update_quantity(self,product_id,quantity):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'update order_items set quantity = %s where product_id = %s'
+        dbcursor.execute(query,(quantity,product_id))
+        dbcursor.close()
+        self.db.commit()
 
 """
 [{'Tables_in_flask_ecommerce': 'order_items'},
