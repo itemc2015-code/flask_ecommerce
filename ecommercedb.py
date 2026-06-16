@@ -110,6 +110,15 @@ class Orders(Dbconnect):
         dbcursor.close()
         return result
 
+    def product_id_order_items(self,product_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select * from order_items where product_id = %s'
+        dbcursor.execute(query,(product_id,))
+        result = dbcursor.fetchone()
+        dbcursor.close()
+        return result
+
     def user_order(self,order_id):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True,buffered=True)
@@ -148,12 +157,12 @@ class Orders(Dbconnect):
         self.db.commit()
         dbcursor.close()
 
-    def add_to_order(self,user_id):
+    def add_to_order(self,user_id,customer_name):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True)
-        query = """insert into orders(user_id)
-                values(%s)"""
-        dbcursor.execute(query,(user_id,))
+        query = """insert into orders(user_id,customer_name)
+                values(%s,%s)"""
+        dbcursor.execute(query,(user_id,customer_name))
         self.db.commit()
         order_id = dbcursor.lastrowid
         dbcursor.close()
@@ -229,11 +238,11 @@ class Orders(Dbconnect):
         dbcursor.close()
         return result['order_count']
 
-    def update_quantity(self,product_id,quantity):
+    def update_quantity_total(self,product_id,quantity,total):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True,buffered=True)
-        query = 'update order_items set quantity = %s where product_id = %s'
-        dbcursor.execute(query,(quantity,product_id))
+        query = 'update order_items set quantity = %s,total = %s where product_id = %s'
+        dbcursor.execute(query,(quantity,total,product_id))
         dbcursor.close()
         self.db.commit()
 

@@ -11,6 +11,7 @@ def add_to_cart(current_user):
     order_lists = current_app.config['list_of_order']
     get_products = current_app.config['list_of_product']
 
+    customer_name = current_user.get('username')
     data = request.get_json() or {}
     product_id = data.get('product_id')
     quantity = data.get('quantity')
@@ -30,6 +31,10 @@ def add_to_cart(current_user):
     user_id = current_user.get('id')
     total = quantity *  get_this_product.get('price')
     has_pending = order_lists.has_pending_order(user_id)
+    get_prod_id = order_lists.view_user_orders(has_pending['order_id'])
+    prod_id = [g['product_id'] for g in get_prod_id]
+    if product_id in prod_id:
+        return jsonify({'message':'item already added, use update to change quantity'})
 
     if has_pending:
         order_id = has_pending.get('order_id')
@@ -38,20 +43,27 @@ def add_to_cart(current_user):
 
         get_order_product_id = order_lists.get_order_items(order_id)
         order_product_id = [g['product_id'] for g in get_order_product_id]
-        print(order_product_id)
-        #def get_order_items(self,order_id):
+
+        if product_id in order_product_id:
+            order_lists.update_quantity_total(product_id,quantity,total)
+            order_grand_total = order_lists.get_order(order_id)  # GET GRAND TOTAL FROM ORDERS TABLE
+            grand_total = order_lists.get_grand_total(order_id)  # SUM OF TOTAL FROM ORDER ITEMS TABLE
+            order_grand_total = grand_total
+            order_lists.grand_total(order_id, order_grand_total)  # UPDATE GRAND TOTAL ON ORDERS TABLE
+            return jsonify({'message':'cart successfully updated'})
 
         order_lists.add_to_order_item(order_id, product_id, quantity, total, price, item_name)
-        order_grand_total = order_lists.get_order(order_id)
-        grand_total = order_lists.get_grand_total(order_id)
+        order_grand_total = order_lists.get_order(order_id) #GET GRAND TOTAL FROM ORDERS TABLE
+        grand_total = order_lists.get_grand_total(order_id) #SUM TOTAL FROM ORDER ITEMS TABLE
         order_grand_total = grand_total
-        total_order_count = order_lists.total_order_count(order_id)
-        current_order_count = order_lists.get_order_count(order_id)
+        total_order_count = order_lists.total_order_count(order_id) #GET ITEM COUNT ON ORDER ITEMS
+        current_order_count = order_lists.get_order_count(order_id) #CALL ORDER COUNT FROM ORDER TABLE FOR UPDATING
         current_order_count = total_order_count
-        order_lists.update_order_count(order_id,current_order_count)
-        order_lists.grand_total(order_id,order_grand_total)
+        order_lists.update_order_count(order_id,current_order_count) #UPDATE ORDER COUNT ON ORDERS TABLE
+        order_lists.grand_total(order_id,order_grand_total) #UPDATE GRAND TOTAL ON ORDERS TABLE
         return jsonify({'message': 'cart updated succefully'})
-    order_id = order_lists.add_to_order(user_id)
+
+    order_id = order_lists.add_to_order(user_id,customer_name)
     price = get_this_product.get('price')
     item_name = get_this_product.get('item_name')
     order_lists.add_to_order_item(order_id,product_id,quantity,total,price,item_name)
@@ -91,10 +103,15 @@ def update_order(current_user):
     if quantity <= 0:
         return jsonify({'message':'quantity must be greater than 0'})
 
-    order_services.update_quantity(product_id,quantity)
+    get_price = order_services.product_id_order_items(product_id)
+    total = quantity * get_price['price']
+    order_services.update_quantity_total(product_id,quantity,total)
+    new_grand_total = order_services.get_grand_total(order_id)
+    order_services.grand_total(order_id,new_grand_total)
     return jsonify({'message':'order updated'})
 
-
+#ONGOING: TESTING IF EXISTING PRODUCT ID, total, count, grand total
+        #why not update grand total and order count on 1st order
 #ALWAYS UPDATE GIT, update order( no same product id,new total not calculated )
 
 '''
