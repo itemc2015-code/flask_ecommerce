@@ -13,7 +13,7 @@ def users_view(current_user):
     try:
         view_user_list = current_app.config['list_of_users']
         view_user_lists = view_user_list.user_querry()
-        view_user_lists1 = [{'id':v['user_id'],'username':v['username'],'role':v['role']} for v in view_user_lists]
+        view_user_lists1 = [{'id':v['user_id'],'username':v['username'],'role':v['role'],'status':'active'if v['is_active'] else 'inactive'} for v in view_user_lists]
         return view_user_lists1
     except:
         return jsonify({'message':'empty'})
