@@ -1,0 +1,21 @@
+tags:
+  - Order
+security:
+  - Bearer: []
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - product_id
+      properties:
+        product_id:
+          type: integer
+          example:
+security:
+  - Bearer: []
+responses:
+  200:
+    description: Admin

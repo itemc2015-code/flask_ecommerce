@@ -128,14 +128,45 @@ def update_order(current_user):
     order_services.grand_total(order_id,new_grand_total)
     return jsonify({'message':'order updated'})
 
-#ONGOING:
+@order_blueprint.route('/order_delete',methods=['DELETE'])
+@token_required
+@swag_from('docs/order_delete.yml')
+def delete_order(current_user):
+    user_id = current_user.get('id')
+    get_data = request.get_json() or {}
+    order_services = current_app.config['list_of_order']
+    product_id = get_data.get('product_id')
+    if not product_id:
+        return jsonify({'message':'input product id'})
+    get_order_id = order_services.pending_order(user_id)
+
+    if not get_order_id:
+        return jsonify({'message': 'product id not found'}), 404
+
+    order_id = get_order_id.get('order_id')
+    get_product_ids = order_services.get_order_items(order_id)
+    product_id_list = [g['product_id'] for g in get_product_ids]
+
+    if product_id not in product_id_list:
+        # print(get_order_id)
+        # print(order_id)
+        # print(get_product_ids)
+        print(product_id_list)
+        return jsonify({'message':'product id not found'}),404
+    order_services.delete_order(product_id)
+    new_grand_total = order_services.get_grand_total(order_id)
+    order_services.grand_total(order_id,new_grand_total)
+    return jsonify({'message':'successfully deleted'})
+
+#ONGOING: delete order, if user has not yet order, error on deleting
+        #clean code
 #ALWAYS UPDATE GIT
 
 '''
 normal - #view products
          #add to cart
          #view order
-         update order
+         #update order
          delete order
          checkout
 	     #register

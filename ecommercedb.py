@@ -246,6 +246,15 @@ class Orders(Dbconnect):
         dbcursor.close()
         self.db.commit()
 
+    def delete_order(self,product_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'delete from order_items where product_id = %s'
+        dbcursor.execute(query,(product_id,))
+        dbcursor.close()
+        self.db.commit()
+
+
 """
 [{'Tables_in_flask_ecommerce': 'order_items'},
 [{'Field': 'id', 'Type': 'int(11)', 'Null': 'NO', 'Key': 'PRI', 'Default': None, 'Extra': 'auto_increment'},

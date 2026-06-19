@@ -54,7 +54,7 @@ USERS/ADMIN
 normal - #view products
          #add to cart
          #view order
-         update order
+         #update order
          delete order
          checkout
 	     #register
