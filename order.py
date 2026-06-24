@@ -85,13 +85,15 @@ def add_to_cart(current_user):
 def view_order(current_user):
     user_id = current_user.get('id')
     order_services = current_app.config['list_of_order']
-    get_order_id = order_services.pending_order(user_id)
+    get_order_id = order_services.has_pending_order(user_id)
 
     if not get_order_id:
         return jsonify({'message':'cart is empty'})
 
     order_id = get_order_id['order_id']
     orders = order_services.user_order(order_id)
+    if not orders:
+        return jsonify({'message':'cart is empty'})
     return orders
 
 @order_blueprint.route('/order_update',methods=['PUT'])
@@ -141,25 +143,60 @@ def delete_order(current_user):
     get_order_id = order_services.pending_order(user_id)
 
     if not get_order_id:
-        return jsonify({'message': 'product id not found'}), 404
+        return jsonify({'message': 'cart is empty'}), 404
 
     order_id = get_order_id.get('order_id')
     get_product_ids = order_services.get_order_items(order_id)
     product_id_list = [g['product_id'] for g in get_product_ids]
 
     if product_id not in product_id_list:
-        # print(get_order_id)
-        # print(order_id)
-        # print(get_product_ids)
-        print(product_id_list)
         return jsonify({'message':'product id not found'}),404
     order_services.delete_order(product_id)
     new_grand_total = order_services.get_grand_total(order_id)
     order_services.grand_total(order_id,new_grand_total)
+    total_order_count = order_services.total_order_count(order_id)
+    current_order_count = order_services.get_order_count(order_id)  # CALL ORDER COUNT FROM ORDER TABLE FOR UPDATING
+    current_order_count = total_order_count
+    order_services.update_order_count(order_id, current_order_count)
     return jsonify({'message':'successfully deleted'})
 
-#ONGOING: delete order, if user has not yet order, error on deleting
-        #clean code
+@order_blueprint.route('/for_checkout',methods=['GET'])
+@token_required
+@swag_from('docs/for_checkout.yml')
+def for_checkout(current_user):
+    user_id = current_user.get('id')
+    order_service = current_app.config['list_of_order']
+    get_order_id = order_service.pending_order(user_id)
+    order_id = get_order_id['order_id']
+    view_orders = order_service.for_checkout(order_id)
+    if not view_orders:
+        return jsonify({'message':'no order to checkout'}),400
+    return view_orders
+
+@order_blueprint.route('/checkout',methods=['POST'])
+@token_required
+@swag_from('docs/checkout.yml')
+def checkout(current_user):
+    user_id = current_user.get('id')
+    order_service = current_app.config['list_of_order']
+    get_order_id = order_service.pending_order(user_id)
+    order_id = get_order_id['order_id']
+    grand_total = get_order_id['grand_total']
+    date_time = get_order_id['date_time']
+    status = get_order_id['status']
+    view_orders = order_service.for_checkout(order_id)
+    if not view_orders:
+        return jsonify({'message': 'no order to checkout'}),400
+    if status == 'completed':
+        return jsonify({'message':'order already checkout'})
+    order_service.update_status(order_id)
+    return {'message':'transaction competed',
+            'order id':order_id,
+            'data & time':date_time,
+            'grand total':grand_total}
+
+#ONGOING: after checkout what is next?
+        # clean code
 #ALWAYS UPDATE GIT
 
 '''
@@ -167,8 +204,8 @@ normal - #view products
          #add to cart
          #view order
          #update order
-         delete order
-         checkout
+         #delete order
+         #checkout
 	     #register
 	     #login
 	     #change password

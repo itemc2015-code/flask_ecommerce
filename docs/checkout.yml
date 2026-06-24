@@ -4,4 +4,4 @@ security:
   - Bearer: []
 responses:
   200:
-    description: For Checkout
+    description: Checkout

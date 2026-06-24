@@ -104,5 +104,46 @@ def product_delete(current_user):
     data.delete_product(product_id)
     return jsonify({'message':'successfully deleted'})
 
+@admin_blueprint.route('/disable_user',methods=['PUT'])
+@token_required
+@admin_required
+@swag_from('docs/disable_user.yml')
+def disable_user(current_user):
+    get_input = request.get_json() or {}
+    user_id_input = get_input.get('user_id')
+    user_service = current_app.config['list_of_users']
+    if_inactive = user_service.if_user_inactive(user_id_input)
+    get_users = user_service.user_querry()
+    users_list = [g['user_id'] for g in get_users]
 
+    if not user_id_input:
+        return jsonify({'message':'input used id to deactivate'})
+    if user_id_input not in users_list:
+        return jsonify({'message':'user id not found'})
+    if if_inactive:
+        return jsonify({'message':'user already inactive'})
 
+    user_service.disable_user(user_id_input)
+    return jsonify({'message':'user is inactive'})
+
+@admin_blueprint.route('/activate_user',methods=['PUT'])
+@token_required
+@admin_required
+@swag_from('docs/activate_user.yml')
+def activate_user(current_user):
+    user_service = current_app.config['list_of_users']
+    get_input = request.get_json() or {}
+    user_id_input = get_input.get('user_id')
+    if not user_id_input:
+        return jsonify({'message':'input user id to activate'})
+    get_users = user_service.user_querry()
+    users_list = [g['user_id'] for g in get_users]
+    if user_id_input not in users_list:
+        return jsonify({'message':'user id not found'}),404
+    if_user_active = user_service.if_user_active(user_id_input)
+    if if_user_active:
+        return jsonify({'message': 'user already active'}),400
+    user_service.enable_user(user_id_input)
+    return jsonify({'message': 'user is active'})
+
+#create route for activate user

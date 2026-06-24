@@ -91,6 +91,41 @@ class Users(Dbconnect):
         dbcursor.close()
         self.db.commit()
 
+    def disable_user(self,user_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'update users set is_active = False where user_id = %s'
+        dbcursor.execute(query,(user_id,))
+        dbcursor.close()
+        self.db.commit()
+
+    def if_user_inactive(self,user_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select * from users where user_id = %s and is_active = False'
+        dbcursor.execute(query,(user_id,))
+        result = dbcursor.fetchone()
+        dbcursor.close()
+        return result
+
+    def enable_user(self,user_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'update users set is_active = True where user_id = %s'
+        dbcursor.execute(query,(user_id,))
+        dbcursor.close()
+        self.db.commit()
+
+    def if_user_active(self,user_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select * from users where user_id = %s and is_active = True'
+        dbcursor.execute(query,(user_id,))
+        result = dbcursor.fetchone()
+        dbcursor.close()
+        return result
+
+
 class Orders(Dbconnect):
     def view_orders(self,user_id,order_id):
         self.db.ping(reconnect=True)
@@ -253,6 +288,29 @@ class Orders(Dbconnect):
         dbcursor.execute(query,(product_id,))
         dbcursor.close()
         self.db.commit()
+
+    def for_checkout(self,order_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select order_id,date_time,order_count,grand_total from orders where order_id = %s'
+        dbcursor.execute(query,(order_id,))
+        result = dbcursor.fetchone()
+        dbcursor.close()
+        return result
+
+    def update_status(self,order_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'update orders set status = "completed" where order_id = %s'
+        dbcursor.execute(query,(order_id,))
+        dbcursor.close()
+        self.db.commit()
+
+    def checkout(self):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select * from orders where order_id = %s'
+        pass
 
 
 """
