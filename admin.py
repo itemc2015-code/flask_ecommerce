@@ -112,9 +112,12 @@ def disable_user(current_user):
     get_input = request.get_json() or {}
     user_id_input = get_input.get('user_id')
     user_service = current_app.config['list_of_users']
+    order_service = current_app.config['list_of_order']
     if_inactive = user_service.if_user_inactive(user_id_input)
     get_users = user_service.user_querry()
     users_list = [g['user_id'] for g in get_users]
+    order_data = order_service.pending_order(user_id_input)
+    order_id = order_data['order_id']
 
     if not user_id_input:
         return jsonify({'message':'input used id to deactivate'})
@@ -124,6 +127,7 @@ def disable_user(current_user):
         return jsonify({'message':'user already inactive'})
 
     user_service.disable_user(user_id_input)
+    order_service.status_to_cancel(order_id)
     return jsonify({'message':'user is inactive'})
 
 @admin_blueprint.route('/activate_user',methods=['PUT'])
@@ -145,5 +149,3 @@ def activate_user(current_user):
         return jsonify({'message': 'user already active'}),400
     user_service.enable_user(user_id_input)
     return jsonify({'message': 'user is active'})
-
-#create route for activate user

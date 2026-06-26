@@ -38,7 +38,10 @@ def user_login():
     username = data.get('username')
     password = data.get('password')
     get_user = user_request.get_username(username)
+    status = get_user.get('is_active')
 
+    if not status:
+        return jsonify({'message':'user is inactive'}),401
     if not username or not str(username).strip() or not password or not str(password).strip():
         return jsonify({'message':'username and password cannot be blank'}),400
     if not get_user:

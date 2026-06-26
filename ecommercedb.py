@@ -215,7 +215,7 @@ class Orders(Dbconnect):
     def pending_order(self,user_id):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True,buffered=True)
-        query = 'select * from orders where user_id = %s'
+        query = 'select * from orders where user_id = %s and status = "pending"'
         dbcursor.execute(query,(user_id,))
         result = dbcursor.fetchone()
         dbcursor.close()
@@ -302,6 +302,14 @@ class Orders(Dbconnect):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True,buffered=True)
         query = 'update orders set status = "completed" where order_id = %s'
+        dbcursor.execute(query,(order_id,))
+        dbcursor.close()
+        self.db.commit()
+
+    def status_to_cancel(self,order_id):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'update orders set status = "cancel" where order_id = %s'
         dbcursor.execute(query,(order_id,))
         dbcursor.close()
         self.db.commit()

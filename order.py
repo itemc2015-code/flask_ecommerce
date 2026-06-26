@@ -167,8 +167,13 @@ def for_checkout(current_user):
     user_id = current_user.get('id')
     order_service = current_app.config['list_of_order']
     get_order_id = order_service.pending_order(user_id)
+    if not get_order_id:
+        return jsonify({'message':'no order to checkout'}),400
     order_id = get_order_id['order_id']
     view_orders = order_service.for_checkout(order_id)
+    get_order_count = view_orders['order_count']
+    if get_order_count == 0:
+        return jsonify({'message':'no item to checkout'}),404
     if not view_orders:
         return jsonify({'message':'no order to checkout'}),400
     return view_orders
@@ -180,11 +185,16 @@ def checkout(current_user):
     user_id = current_user.get('id')
     order_service = current_app.config['list_of_order']
     get_order_id = order_service.pending_order(user_id)
+    if not get_order_id:
+        return jsonify({'message': 'no order to checkout'}),400
     order_id = get_order_id['order_id']
     grand_total = get_order_id['grand_total']
     date_time = get_order_id['date_time']
     status = get_order_id['status']
     view_orders = order_service.for_checkout(order_id)
+    get_order_count = view_orders['order_count']
+    if get_order_count == 0:
+        return jsonify({'message':'no item to checkout'}),404
     if not view_orders:
         return jsonify({'message': 'no order to checkout'}),400
     if status == 'completed':
@@ -195,7 +205,9 @@ def checkout(current_user):
             'data & time':date_time,
             'grand total':grand_total}
 
-#ONGOING: after checkout what is next?
+#ONGOING: cancel order if user inactive
+        #checkout and for checkout see old order, instead of new order after deactivation
+        #order delete and order update cant see new order after deactivation of user
         # clean code
 #ALWAYS UPDATE GIT
 
