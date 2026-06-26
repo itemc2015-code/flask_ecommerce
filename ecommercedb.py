@@ -320,19 +320,3 @@ class Orders(Dbconnect):
         query = 'select * from orders where order_id = %s'
         pass
 
-
-"""
-[{'Tables_in_flask_ecommerce': 'order_items'},
-[{'Field': 'id', 'Type': 'int(11)', 'Null': 'NO', 'Key': 'PRI', 'Default': None, 'Extra': 'auto_increment'},
-{'Field': 'order_id', 'Type': 'int(11)', 'Null': 'YES', 'Key': 'MUL', 'Default': None, 'Extra': ''}, 
-{'Field': 'product_id', 'Type':'int(11)', 'Null': 'YES', 'Key': 'MUL', 'Default': None, 'Extra': ''}, 
-{'Field': 'quantity', 'Type': 'int(11)', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}, 
-{'Field': 'total', 'Type': 'float', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}, 
-{'Field': 'price', 'Type': 'float', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}]
-
-{'Tables_in_flask_ecommerce': 'orders'}, 
-[{'Field': 'order_id', 'Type': 'int(11)', 'Null': 'NO', 'Key': 'PRI', 'Default': None, 'Extra': 'auto_increment'}, 
-{'Field': 'user_id', 'Type': 'int(11)', 'Null': 'YES', 'Key': 'MUL', 'Default': None, 'Extra': ''}, 
-{'Field': 'grand_total','Type': 'float', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}, 
-{'Field': 'price', 'Type': 'float', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}]
-"""

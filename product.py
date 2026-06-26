@@ -12,6 +12,5 @@ def product_lists(current_user):
     try:
         view_lists = view_product.product_list()
         return view_lists
-        # return render_template('main.html',view_lists=view_lists)
     except:
         return jsonify({'message':'empty'})

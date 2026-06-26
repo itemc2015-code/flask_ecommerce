@@ -31,10 +31,6 @@ def add_to_cart(current_user):
     user_id = current_user.get('id')
     total = quantity *  get_this_product.get('price')
     has_pending = order_lists.has_pending_order(user_id)
-    # get_prod_id = order_lists.view_user_orders(has_pending['order_id'])
-    # prod_id = [g['product_id'] for g in get_prod_id]
-    # if product_id in prod_id:
-    #     return jsonify({'message':'item already added, use update to change quantity'})
 
     if has_pending:
         order_id = has_pending.get('order_id')
@@ -45,11 +41,6 @@ def add_to_cart(current_user):
         order_product_id = [g['product_id'] for g in get_order_product_id]
 
         if product_id in order_product_id:
-            # order_lists.update_quantity_total(product_id,quantity,total)
-            # order_grand_total = order_lists.get_order(order_id)  # GET GRAND TOTAL FROM ORDERS TABLE
-            # grand_total = order_lists.get_grand_total(order_id)  # SUM OF TOTAL FROM ORDER ITEMS TABLE
-            # order_grand_total = grand_total
-            # order_lists.grand_total(order_id, order_grand_total)  # UPDATE GRAND TOTAL ON ORDERS TABLE
             return jsonify({'message':'item already added, use update to change quantity'})
 
         order_lists.add_to_order_item(order_id, product_id, quantity, total, price, item_name)
@@ -76,7 +67,6 @@ def add_to_cart(current_user):
     current_order_count = total_order_count
     order_lists.update_order_count(order_id, current_order_count)  # UPDATE ORDER COUNT ON ORDERS TABLE
     order_lists.grand_total(order_id, order_grand_total)  # UPDATE GRAND TOTAL ON ORDERS TABLE
-
     return jsonify({'message':'item added to cart'})
 
 @order_blueprint.route('/view_orders',methods=['GET'])
@@ -205,48 +195,4 @@ def checkout(current_user):
             'data & time':date_time,
             'grand total':grand_total}
 
-#ONGOING: cancel order if user inactive
-        #checkout and for checkout see old order, instead of new order after deactivation
-        #order delete and order update cant see new order after deactivation of user
-        # clean code
-#ALWAYS UPDATE GIT
 
-'''
-normal - #view products
-         #add to cart
-         #view order
-         #update order
-         #delete order
-         #checkout
-	     #register
-	     #login
-	     #change password
-	     
-[
-  {
-    "id": 7,
-    "role": "user",
-    "username": "luffy"
-  },
-  {
-    "id": 9,
-    "role": "user",
-    "username": "usoff"
-  },
-  {
-    "id": 12,
-    "role": "admin",
-    "username": "brook"
-  },
-  {
-    "id": 13,
-    "role": "admin",
-    "username": "admin"
-  },
-  {
-    "id": 14,
-    "role": "user",
-    "username": "chopper"
-  }
-]
-'''

@@ -48,53 +48,53 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 """
-USERS/ADMIN
-#create default admin on start
-#/sign_up for normal user,#/login
-normal - #view products
-         #add to cart
-         #view order
-         #update order
-         #delete order
-         #checkout
-	     #register
-	     #login
-	     #change password
-admin - #view products
-        #update product list
-        #delete product
-	    #delete user
-	    #update password of user 
-	    #create user, role is admin
+--USERS/ADMIN
+    #create default admin on start
+    #/sign_up for normal user
+    #/user_login
+    normal user 
+             #view products
+             #add to cart
+             #view order
+             #update order
+             #delete order
+             #checkout
+             #register
+             #login
+             #change password
+    admin - #view products
+            #update product list
+            #delete product
+            #delete user
+            #update password of user 
+            #create user, role is admin
 
-DATABASE
-users > orders > order_items
-users > products
-products > order_items
-orders > order_items
+-- DATABASE
+    users > orders > order_items > products
 
-BACKEND (ROUTES)
-order
-/create_order
-/update
-/delete
-/checkout
-/view_order_summary
-
-products
-/view_products
-/delete_products - admin
-/update_products - admin
-
-user
-/register
-/change_password
-/delete_user - admin
-/update_password_of_any_user - admin
-
-AUTHENTICATION
-#generate token
-#protect routes
+-- BACKEND (ROUTES)
+    order
+    /add_to_cart
+    /view_order
+    /update_order
+    /delete_order
+    /for_checkout
+    /checkout
+    
+    products
+    /product_lists
+    /product_delete - admin
+    /update_product - admin
+    /users_view - admin
+    /user_delete - admin
+    /user_password - admin
+    /admin_user - admin
+    /disable_user - admin
+    /activate_user - admin   
+   
+-- AUTHENTICATION
+    #generate token
+    #protect routes
 
 HTML (BASIC DISPLAY) 
 """
