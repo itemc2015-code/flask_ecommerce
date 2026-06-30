@@ -38,6 +38,8 @@ def user_login():
     username = data.get('username')
     password = data.get('password')
     get_user = user_request.get_username(username)
+    if not get_user:
+        return jsonify({'message':'user does not exist'})
     status = get_user.get('is_active')
 
     if not status:

@@ -30,7 +30,7 @@ def add_to_cart(current_user):
 
     user_id = current_user.get('id')
     total = quantity *  get_this_product.get('price')
-    has_pending = order_lists.has_pending_order(user_id)
+    has_pending = order_lists.pending_order(user_id)
 
     if has_pending:
         order_id = has_pending.get('order_id')
@@ -75,7 +75,7 @@ def add_to_cart(current_user):
 def view_order(current_user):
     user_id = current_user.get('id')
     order_services = current_app.config['list_of_order']
-    get_order_id = order_services.has_pending_order(user_id)
+    get_order_id = order_services.pending_order(user_id)
 
     if not get_order_id:
         return jsonify({'message':'cart is empty'})
@@ -196,3 +196,48 @@ def checkout(current_user):
             'grand total':grand_total}
 
 
+'''
+1. Login has a possible crash
+Current:
+get_user = user_request.get_username(username)
+status = get_user.get('is_active')
+Problem:
+If username does not exist:
+get_user = None
+
+2.
+Admin disable user
+This can crash:
+order_data = order_service.pending_order(user_id_input)
+order_id = order_data['order_id']
+If user has no cart:
+order_data = None
+
+3.Your order delete/update should include order_id
+Example:
+delete_order(product_id)
+Currently:
+delete from order_items
+where product_id=%s
+Problem:
+If the same product exists in another order:
+Order 1
+product 5
+Order 2
+product 5
+you might delete the wrong one.
+
+4.Update product bug
+Current:
+stock_quantity = get_prod_id['stock_quantity'] if not stock_quantity else stock_quantity
+Problem:
+If admin wants:
+{
+ "stock_quantity":0
+}
+Python sees:
+not 0 = True
+So it keeps the old value.
+
+5.chatgpt for others
+'''
