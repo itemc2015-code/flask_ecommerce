@@ -197,21 +197,6 @@ def checkout(current_user):
 
 
 '''
-1. Login has a possible crash
-Current:
-get_user = user_request.get_username(username)
-status = get_user.get('is_active')
-Problem:
-If username does not exist:
-get_user = None
-
-2.
-Admin disable user
-This can crash:
-order_data = order_service.pending_order(user_id_input)
-order_id = order_data['order_id']
-If user has no cart:
-order_data = None
 
 3.Your order delete/update should include order_id
 Example:

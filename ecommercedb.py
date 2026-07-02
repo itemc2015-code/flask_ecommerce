@@ -125,6 +125,14 @@ class Users(Dbconnect):
         dbcursor.close()
         return result
 
+    def if_user_no_order(self,user_id,order_count):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select * from orders where user_id = %s and order_count = %s'
+        dbcursor.execute(query,(user_id,order_count))
+        result = dbcursor.fetchone()
+        dbcursor.close()
+        return result
 
 class Orders(Dbconnect):
     def view_orders(self,user_id,order_id):
@@ -169,6 +177,15 @@ class Orders(Dbconnect):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True,buffered=True)
         query = 'select * from order_items'
+        dbcursor.execute(query)
+        result = dbcursor.fetchall()
+        dbcursor.close()
+        return result
+
+    def all_orders(self):
+        self.db.ping(reconnect=True)
+        dbcursor = self.db.cursor(dictionary=True,buffered=True)
+        query = 'select * from orders'
         dbcursor.execute(query)
         result = dbcursor.fetchall()
         dbcursor.close()

@@ -28,8 +28,15 @@ def user_delete(current_user):
     get_id = [g['user_id'] for g in get_users]
     get_user_id = request.get_json() or {}
     get_user_id = get_user_id.get('id')
+    current_user_id = current_user.get('id')
+
     if get_user_id not in get_id:
         return jsonify({'message':'user id not found'}),403
+    if get_user_id == current_user_id:
+        return jsonify({'message':'currently login, cannot be deleted'})
+    if get_user_id == 1:
+        return jsonify({'message': 'default admin cannot be deleted'})
+
     get_user.delete_user(get_user_id)
     return jsonify({'message':'user deleted'})
 
@@ -111,21 +118,29 @@ def product_delete(current_user):
 def disable_user(current_user):
     get_input = request.get_json() or {}
     user_id_input = get_input.get('user_id')
+    current_user_id = current_user.get('id')
     user_service = current_app.config['list_of_users']
     order_service = current_app.config['list_of_order']
     if_inactive = user_service.if_user_inactive(user_id_input)
     get_users = user_service.user_querry()
     users_list = [g['user_id'] for g in get_users]
     order_data = order_service.pending_order(user_id_input)
-    order_id = order_data['order_id']
 
+    if user_id_input == current_user_id:
+        return jsonify({'message':'currently login, cannot be disable'})
     if not user_id_input:
-        return jsonify({'message':'input used id to deactivate'})
+        return jsonify({'message':'input user id to deactivate'})
+    if user_id_input == 1:
+        return jsonify({'message': 'default admin cannot be disable'})
     if user_id_input not in users_list:
         return jsonify({'message':'user id not found'})
     if if_inactive:
         return jsonify({'message':'user already inactive'})
+    if not order_data:
+        user_service.disable_user(user_id_input)
+        return jsonify({'message': 'user is inactive, no order for this user'})
 
+    order_id = order_data['order_id']
     user_service.disable_user(user_id_input)
     order_service.status_to_cancel(order_id)
     return jsonify({'message':'user is inactive'})
@@ -149,3 +164,4 @@ def activate_user(current_user):
         return jsonify({'message': 'user already active'}),400
     user_service.enable_user(user_id_input)
     return jsonify({'message': 'user is active'})
+
