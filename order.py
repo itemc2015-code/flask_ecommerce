@@ -113,9 +113,9 @@ def update_order(current_user):
     if quantity <= 0:
         return jsonify({'message':'quantity must be greater than 0'})
 
-    get_price = order_services.product_id_order_items(product_id)
+    get_price = order_services.product_id_order_items(order_id,product_id)
     total = quantity * get_price['price']
-    order_services.update_quantity_total(product_id,quantity,total)
+    order_services.update_quantity_total(order_id,product_id,quantity,total)
     new_grand_total = order_services.get_grand_total(order_id)
     order_services.grand_total(order_id,new_grand_total)
     return jsonify({'message':'order updated'})
@@ -141,7 +141,7 @@ def delete_order(current_user):
 
     if product_id not in product_id_list:
         return jsonify({'message':'product id not found'}),404
-    order_services.delete_order(product_id)
+    order_services.delete_order(order_id,product_id)
     new_grand_total = order_services.get_grand_total(order_id)
     order_services.grand_total(order_id,new_grand_total)
     total_order_count = order_services.total_order_count(order_id)

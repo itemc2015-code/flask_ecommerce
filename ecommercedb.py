@@ -153,11 +153,11 @@ class Orders(Dbconnect):
         dbcursor.close()
         return result
 
-    def product_id_order_items(self,product_id):
+    def product_id_order_items(self,order_id,product_id):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True,buffered=True)
-        query = 'select * from order_items where product_id = %s'
-        dbcursor.execute(query,(product_id,))
+        query = 'select * from order_items where order_id = %s and product_id = %s'
+        dbcursor.execute(query,(order_id,product_id))
         result = dbcursor.fetchone()
         dbcursor.close()
         return result
@@ -290,19 +290,19 @@ class Orders(Dbconnect):
         dbcursor.close()
         return result['order_count']
 
-    def update_quantity_total(self,product_id,quantity,total):
+    def update_quantity_total(self,order_id,product_id,quantity,total):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True,buffered=True)
-        query = 'update order_items set quantity = %s,total = %s where product_id = %s'
-        dbcursor.execute(query,(quantity,total,product_id))
+        query = 'update order_items set quantity = %s,total = %s where order_id = %s and product_id = %s'
+        dbcursor.execute(query,(quantity,total,order_id,product_id))
         dbcursor.close()
         self.db.commit()
 
-    def delete_order(self,product_id):
+    def delete_order(self,order_id,product_id):
         self.db.ping(reconnect=True)
         dbcursor = self.db.cursor(dictionary=True,buffered=True)
-        query = 'delete from order_items where product_id = %s'
-        dbcursor.execute(query,(product_id,))
+        query = 'delete from order_items where order_id = %s and product_id = %s'
+        dbcursor.execute(query,(order_id,product_id))
         dbcursor.close()
         self.db.commit()
 
